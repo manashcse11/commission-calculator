@@ -19,7 +19,11 @@ class CommissionController extends Controller
         $file->move(public_path('uploads'), $fileName);
         $commissionService = new CommissionService();
 
-        $commissions = $commissionService->generateCommission($this->readCsv(public_path('uploads') . "/" . $fileName));
+        $data = $this->readCsv(public_path('uploads') . "/" . $fileName);
+        if(isset($data['error'])){
+            return redirect('/')->with('error', $data['error']);
+        }
+        $commissions = $commissionService->generateCommission($data);
         return redirect('/')->with('commissions', $commissions);
     }
 
@@ -32,6 +36,9 @@ class CommissionController extends Controller
         {
             while (($row = fgetcsv($handle, 1000, $delimiter)) !== false)
             {
+                if(count($row) != env('TOTAL_COLUMNS_IN_CSV', 6)){
+                    return ['error' => 'CSV file is not well formatted'];
+                }
                 array_push($data, $row);
             }
             fclose($handle);

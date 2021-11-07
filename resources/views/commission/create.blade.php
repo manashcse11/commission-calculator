@@ -24,6 +24,11 @@
     <body class="antialiased">
     <div class="container">
         <h3>Commission calculator</h3>
+        @if ( Session::has('error') )
+            <div class="alert alert-danger" role="alert">
+                {{ Session::get('error') }}
+            </div>
+        @endif
         <div class="row mb-5">
             <div class="col-md-12">
                 <form method="POST" action="{{ route('upload') }}" enctype="multipart/form-data">
